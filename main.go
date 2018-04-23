@@ -3,7 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -31,8 +34,27 @@ func readEnv() error {
 	return nil
 }
 
+// Loads normalized paths to images into memory
+func loadImageNames() error {
+	fis, err := ioutil.ReadDir(tokenImageDir)
+	if err != nil {
+		return err
+	}
+	for _, fi := range fis {
+		if !fi.Mode().IsRegular() {
+			continue
+		}
+		addr := strings.ToLower(strings.TrimSuffix(fi.Name(), filepath.Ext(fi.Name())))
+		tokenImages[addr] = fi.Name()
+	}
+	return nil
+}
+
 func main() {
 	if err := readEnv(); err != nil {
+		log.Fatal(err)
+	}
+	if err := loadImageNames(); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("token-list")
