@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,14 +10,23 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Config variables
 var (
 	// Path to JSON file containing list of tokens
 	tokenListFile string
 	// Directory where token images are stored
 	tokenImageDir string
+	// Host for server
+	serverHost string
+)
 
+var (
 	// Map of token addresses to paths to token images
 	tokenImages = map[string]string{}
+
+	// token data loaded from file, indexed by symbol
+	tokens         = []*Token{}
+	tokensBySymbol = map[string]*Token{}
 )
 
 // Read config from environment variables
@@ -51,11 +59,13 @@ func loadImageNames() error {
 }
 
 func main() {
-	if err := readEnv(); err != nil {
+	checkErr(readEnv())
+	checkErr(loadImageNames())
+	log.Infof("Starting server on %s", serverHost)
+}
+
+func checkErr(err error) {
+	if err != nil {
 		log.Fatal(err)
 	}
-	if err := loadImageNames(); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("token-list")
 }
