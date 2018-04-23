@@ -11,9 +11,15 @@ import (
 
 func startServer() {
 	r := mux.NewRouter()
-	r.HandleFunc("/tokens", tokensHandler)
-	r.HandleFunc("/token/{symbol}", tokenHandler)
-	r.Use(apiMiddleware)
+	api := r.PathPrefix("/api/v1").Subrouter()
+
+	api.HandleFunc("/tokens", tokensHandler)
+	api.HandleFunc("/token/{symbol}", tokenHandler)
+	api.Use(apiMiddleware)
+
+	// Static images server
+	r.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir(tokenImageDir))))
+
 	log.Fatal(http.ListenAndServe(serverHost, r))
 }
 
