@@ -14,6 +14,7 @@ func startServer() {
 	r.HandleFunc("/tokens", tokensHandler)
 	r.HandleFunc("/token/{symbol}", tokenHandler)
 	r.Use(apiMiddleware)
+	log.Fatal(http.ListenAndServe(serverHost, r))
 }
 
 func apiMiddleware(next http.Handler) http.Handler {

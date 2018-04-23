@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
+	flag "github.com/spf13/pflag"
 )
 
 // Config variables
@@ -28,6 +29,10 @@ var (
 	tokens         = []*Token{}
 	tokensBySymbol = map[string]*Token{}
 )
+
+func init() {
+	flag.StringVarP(&serverHost, "host", "h", ":8000", "Web server host and port")
+}
 
 // Read config from environment variables
 func readEnv() error {
@@ -61,7 +66,10 @@ func loadImageNames() error {
 func main() {
 	checkErr(readEnv())
 	checkErr(loadImageNames())
+	flag.Parse()
 	log.Infof("Starting server on %s", serverHost)
+
+	startServer()
 }
 
 func checkErr(err error) {
