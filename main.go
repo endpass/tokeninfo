@@ -58,15 +58,42 @@ func loadImageNames() error {
 			continue
 		}
 		addr := strings.ToLower(strings.TrimSuffix(fi.Name(), filepath.Ext(fi.Name())))
-		tokenImages[addr] = fi.Name()
+		tokenImages[addr] = filepath.Base(fi.Name())
+	}
+	return nil
+}
+
+// Loads token data from file
+func loadTokenList() error {
+	f, err := os.Open(tokenListFile)
+	if err != nil {
+		return err
+	}
+	tokens, err = ParseTokenList(f)
+	if err != nil {
+		return err
+	}
+	// Index tokens and append images
+	for _, token := range tokens {
+		if tokensBySymbol[token.Symbol] == nil {
+			tokensBySymbol[strings.ToUpper(token.Symbol)] = token
+		}
+		logoImg := tokenImages[strings.ToLower(token.Address)]
+		if len(logoImg) > 0 {
+			// URL to logo image
+			token.Logo = "/img/" + logoImg
+		}
 	}
 	return nil
 }
 
 func main() {
 	checkErr(readEnv())
-	checkErr(loadImageNames())
 	flag.Parse()
+
+	checkErr(loadImageNames())
+	checkErr(loadTokenList())
+	log.Infof("Cached data for %d tokens", len(tokens))
 	log.Infof("Starting server on %s", serverHost)
 
 	startServer()
