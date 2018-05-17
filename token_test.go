@@ -76,6 +76,12 @@ var testList = `
 			"twitter": "https://twitter.com/Delphitechtoken",
 			"youtube": ""
 		}
+	},
+	{
+		"symbol": "DTT2",
+		"address": "0xf9f7c29cfdf19fcf1f2aa6b84aa367bcf1bd1676",
+		"decimals": 18,
+		"name": "Delphi Tech Token 2"
 	}
 ]
 `
