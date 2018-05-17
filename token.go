@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"strings"
 )
 
 // Info about a single ERC20 token
@@ -36,18 +37,29 @@ type tokenListToken struct {
 
 func ParseTokenList(r io.Reader) ([]*Token, error) {
 	var tokens []*tokenListToken
+	// To enforce uniqueness by address, only take the first one at an
+	// address
+	tokenAddrs := make(map[string]bool)
+
 	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&tokens); err != nil {
 		return nil, err
 	}
-	results := make([]*Token, len(tokens))
-	for i, token := range tokens {
-		results[i] = &Token{
+	results := make([]*Token, 0)
+	for _, token := range tokens {
+		// Skip if not unique
+		addr := strings.ToLower(token.Address)
+		if tokenAddrs[addr] {
+			continue
+		}
+		tokenAddrs[addr] = true
+		result := &Token{
 			Name:     token.Name,
 			Symbol:   token.Symbol,
 			Address:  token.Address,
 			Decimals: token.Decimals,
 		}
+		results = append(results, result)
 	}
 	return results, nil
 }
