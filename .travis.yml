@@ -11,4 +11,4 @@ deploy:
   secret_access_key: $AWS_SECRET_KEY
   bucket: $S3_BUCKET
   region: $AWS_REGION
-  local_dir: $TRAVIS_BUILD_DIR/bin/
+  local_dir: bin
