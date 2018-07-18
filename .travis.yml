@@ -1,3 +1,11 @@
 language: go
 go:
   - "1.10"
+
+deploy:
+- provider: s3
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  skip_cleanup: true
+  bucket: $S3_BUCKET
+  region: $AWS_REGION
