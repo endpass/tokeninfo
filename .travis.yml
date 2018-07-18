@@ -5,6 +5,10 @@ go:
 script:
   - go build -o $TRAVIS_BUILD_DIR/bin/tokeninfo
   - mv $TRAVIS_BUILD_DIR/scripts/ $TRAVIS_BUILD_DIR/bin/
+  - zip -r latest bin/*
+  - mkdir -p dsource
+  - mv latest.zip dsource/latest.zip
+
 deploy:
 - provider: s3
   access_key_id: $AWS_ACCESS_KEY
@@ -12,5 +16,15 @@ deploy:
   bucket: $S3_BUCKET
   region: $AWS_REGION
   skip_cleanup: true
-  local_dir: bin
+  local_dir: dsource
   upload-dir: tokeninfo
+- provider: codedeploy
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: $S3_BUCKET
+  region: $AWS_REGION
+  key: latest.zip
+  bundle: zip
+  application: tokeninfo-app
+  deployment_group: tokeninfo-dg
+
