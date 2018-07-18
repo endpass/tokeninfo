@@ -3,7 +3,7 @@ go:
   - "1.10"
 
 script:
-  go build -o $TRAVIS_BUILD_DIR/bin/
+  go build -o $TRAVIS_BUILD_DIR/bin/tokeninfo
   
 deploy:
 - provider: s3
