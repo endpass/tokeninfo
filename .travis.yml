@@ -6,7 +6,8 @@ script:
   - go build -o $TRAVIS_BUILD_DIR/bin/tokeninfo
   - mv $TRAVIS_BUILD_DIR/scripts/ $TRAVIS_BUILD_DIR/bin/
   - mv $TRAVIS_BUILD_DIR/appspec.yml $TRAVIS_BUILD_DIR/bin/
-  - zip -r latest bin/*
+  - cd $TRAVIS_BUILD_DIR/bin
+  - zip -r latest *
   - mkdir -p dsource
   - mv latest.zip dsource/latest.zip
 
