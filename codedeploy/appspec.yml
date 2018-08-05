@@ -12,6 +12,6 @@ permissions:
      mode: 755
 hooks:
   BeforeInstall:
-    - location: scripts/before_install.sh
+    - location: hooks/before_install.sh
   ApplicationStart:
-    - location: scripts/application_start.sh
+    - location: hooks/application_start.sh
