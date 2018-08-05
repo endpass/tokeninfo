@@ -1,1 +1,1 @@
-systemctl restart tokeninfo.service
+systemctl start tokeninfo.service
