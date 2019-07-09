@@ -1,14 +1,14 @@
 language: go
 go:
-- '1.10'
+- '1.12.x'
 script:
 - go build -o $TRAVIS_BUILD_DIR/bin/tokeninfo
 - mv $TRAVIS_BUILD_DIR/scripts/ $TRAVIS_BUILD_DIR/bin/
 - mv $TRAVIS_BUILD_DIR/codedeploy/* $TRAVIS_BUILD_DIR/bin/
 - cd $TRAVIS_BUILD_DIR/bin
-- zip -r latest *
+- zip -r $TRAVIS_COMMIT *
 - mkdir -p dsource
-- mv latest.zip dsource/latest.zip
+- mv $TRAVIS_COMMIT.zip dsource/$TRAVIS_COMMIT.zip
 deploy:
 - provider: s3
   access_key_id: "$AWS_ACCESS_KEY"
@@ -23,7 +23,7 @@ deploy:
   secret_access_key: "$AWS_SECRET_KEY"
   bucket: "$AWS_S3_BUCKET"
   region: "$AWS_REGION"
-  key: tokeninfo/latest.zip
+  key: tokeninfo/$TRAVIS_COMMIT.zip
   bundle: zip
   application: tokeninfo-dev-app
   deployment_group: tokeninfo-dev-deployment-group
