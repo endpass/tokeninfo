@@ -11,6 +11,8 @@ import (
 
 func startServer() {
 	r := mux.NewRouter()
+	r.HandleFunc("/health", okHandler)
+
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	api.HandleFunc("/tokens", tokensHandler)
@@ -21,6 +23,10 @@ func startServer() {
 	r.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir(tokenImageDir))))
 
 	log.Fatal(http.ListenAndServe(serverHost, r))
+}
+
+func okHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }
 
 func apiMiddleware(next http.Handler) http.Handler {

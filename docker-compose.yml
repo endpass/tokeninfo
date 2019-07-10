@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    image: tokeninfo
+    restart: always
+    build: .
+    volumes:
+      - ${TOKEN_LIST}:/opt/data/ethereum-lists/tokens/tokens-eth.json
+      - ${TOKEN_IMAGE_DIR}:/opt/data/tokens/images
+    ports:
+      - "8000:8000"

@@ -13,6 +13,8 @@ import (
 
 // Config variables
 var (
+	// Version refers to build version.
+	Version string
 	// Path to JSON file containing list of tokens
 	tokenListFile string
 	// Directory where token images are stored

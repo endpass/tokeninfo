@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Info about a single ERC20 token
+// Token holds info about a single ERC20 token.
 type Token struct {
 	// Long name of the token
 	Name string `json:"name"`
@@ -35,6 +35,7 @@ type tokenListToken struct {
 	Logo string `json:"-"`
 }
 
+// ParseTokenList returns token list from Reader.
 func ParseTokenList(r io.Reader) ([]*Token, error) {
 	var tokens []*tokenListToken
 	// To enforce uniqueness by address, only take the first one at an

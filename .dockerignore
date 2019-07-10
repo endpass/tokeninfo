@@ -1,0 +1,7 @@
+.vscode/
+.idea/
+.env
+.DS_Store
+bin/
+codedeploy/
+README.md
