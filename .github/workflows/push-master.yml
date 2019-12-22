@@ -1,0 +1,75 @@
+name: tokeninfo master
+on: 
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repo
+      uses: actions/checkout@v1
+
+    - name: Download tokens-eth.json
+      run: wget https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
+      
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: tokeninfo
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
+        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
+
+    - name: Logout of Amazon ECR
+      if: always()
+      run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+    - name: Render Amazon ECS task definition
+      id: render-container
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: .github/tokeninfo-dev-task-definition.json
+        container-name: tokeninfo
+        image: ${{ steps.build-image.outputs.image-latest }}
+
+#    - name: Deploy to Amazon ECS
+#      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#      with:
+#        task-definition: ${{ steps.render-container.outputs.task-definition }}
+#        service: tokeninfo-dev-service
+#        cluster: backend-cluster-dev
+#        wait-for-service-stability: true
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: 'Build and Deploy tokeninfo binary'
+        username: 'GitHub Actions'
+        icon_emoji: ':github:'
+        url: ${{ secrets.SLACK_WEBHOOK }}
