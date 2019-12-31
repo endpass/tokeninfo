@@ -33,6 +33,12 @@ jobs:
     - name: Download TrustWallet tokens
       run: aws s3 sync s3://endpass-trustwallet-tokens/* ./tokens/
 
+    - name: debug
+      run: |
+        pwd
+        ls -l
+        ls -l ./tokens/ | wc -l 
+
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
