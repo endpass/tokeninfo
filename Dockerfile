@@ -25,6 +25,5 @@ COPY --from=builder /app/bin/tokeninfo .
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/tokens/ /data/tokens/
 COPY --from=builder /app/tokens-eth.json /data/
-HEALTHCHECK --interval=10s --timeout=1m --retries=5 CMD curl http://localhost:8080/health || exit 1
 EXPOSE 8080
 ENTRYPOINT ["/tokeninfo"]
