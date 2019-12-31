@@ -16,9 +16,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v1
 
-    - name: Download tokens-eth.json
-      run: wget https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
-      
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -29,6 +26,12 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Download tokens-eth.json
+      run: wget https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
+
+    - name: Download TrustWallet tokens
+      run: aws s3 sync s3://endpass-trustwallet-tokens/* ./tokens/
 
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
