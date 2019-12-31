@@ -31,7 +31,7 @@ jobs:
       run: wget https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
 
     - name: Download TrustWallet tokens
-      run: aws s3 sync s3://endpass-trustwallet-tokens/* ./tokens/
+      run: aws s3 sync s3://endpass-trustwallet-tokens/ ./tokens/
 
     - name: debug
       run: |
