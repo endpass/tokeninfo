@@ -18,11 +18,7 @@ RUN go mod download && \
     -ldflags '-s -w -extldflags "-static"' \
     -o bin/tokeninfo
 
-#RUN git clone https://github.com/TrustWallet/tokens.git /app/data/tokens/ && \
-#    git clone https://github.com/MyEtherWallet/ethereum-lists.git /app/data/ethereum-lists/
-
 FROM scratch
-ENV PORT 8080
 ENV TOKEN_LIST /data/tokens-eth.json
 ENV TOKEN_IMAGE_DIR /data/tokens
 COPY --from=builder /app/bin/tokeninfo .
@@ -30,4 +26,5 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 COPY --from=builder /app/tokens/ /data/tokens/
 COPY --from=builder /app/tokens-eth.json /data/
 HEALTHCHECK --interval=10s --timeout=1m --retries=5 CMD curl http://localhost:8080/health || exit 1
+EXPOSE 8080
 ENTRYPOINT ["/tokeninfo"]

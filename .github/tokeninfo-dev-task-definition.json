@@ -18,7 +18,9 @@
                     "containerPort": 8080
                 }
             ],
-            "command": "-h :8080",
+            "command": [
+                "-h :8080"
+            ],
             "linuxParameters": null,
             "cpu": 0,
             "environment": [
