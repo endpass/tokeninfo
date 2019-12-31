@@ -33,12 +33,6 @@ jobs:
     - name: Download TrustWallet tokens
       run: aws s3 sync s3://endpass-trustwallet-tokens/ ./tokens/
 
-    - name: debug
-      run: |
-        pwd
-        ls -l
-        ls -l ./tokens/ | wc -l 
-
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -65,13 +59,13 @@ jobs:
         container-name: tokeninfo
         image: ${{ steps.build-image.outputs.image-latest }}
 
-#    - name: Deploy to Amazon ECS
-#      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#      with:
-#        task-definition: ${{ steps.render-container.outputs.task-definition }}
-#        service: tokeninfo-dev-service
-#        cluster: backend-cluster-dev
-#        wait-for-service-stability: true
+    - name: Deploy to Amazon ECS
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.render-container.outputs.task-definition }}
+        service: tokeninfo-dev-service
+        cluster: backend-cluster-dev
+        wait-for-service-stability: true
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
