@@ -15,12 +15,10 @@
             "entryPoint": null,
             "portMappings": [
                 {
-                    "containerPort": 8080
+                    "containerPort": 8000
                 }
             ],
-            "command": [
-                "-h :8080"
-            ],
+            "command": null,
             "linuxParameters": null,
             "cpu": 0,
             "environment": [
