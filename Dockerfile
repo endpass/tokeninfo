@@ -1,4 +1,4 @@
-FROM golang:1.12.14-alpine3.11 as builder
+FROM golang:1.13.5-alpine3.11 as builder
 
 RUN apk add --no-cache \
     git \
@@ -6,6 +6,8 @@ RUN apk add --no-cache \
     build-base \
     ca-certificates
 
+ENV GOPRIVATE=github.com/machinae
+ENV GOPROXY=https://proxy.golang.org,direct
 ENV GO111MODULE=on
 
 WORKDIR /app
