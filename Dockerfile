@@ -23,5 +23,5 @@ COPY --from=builder /app/bin/tokeninfo .
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/tokens/ /data/tokens/
 COPY --from=builder /app/tokens-eth.json /data/
-EXPOSE 8080
+EXPOSE 8000
 ENTRYPOINT ["/tokeninfo"]
