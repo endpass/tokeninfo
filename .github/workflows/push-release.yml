@@ -59,13 +59,13 @@ jobs:
         container-name: tokeninfo
         image: ${{ steps.build-image.outputs.image-latest }}
 
-#    - name: Deploy to Amazon ECS
-#      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#      with:
-#        task-definition: ${{ steps.render-container.outputs.task-definition }}
-#        service: tokeninfo-staging-service
-#        cluster: backend-cluster-staging
-#        wait-for-service-stability: true
+    - name: Deploy to Amazon ECS
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.render-container.outputs.task-definition }}
+        service: tokeninfo-staging-service
+        cluster: backend-cluster-staging
+        wait-for-service-stability: true
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
