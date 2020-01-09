@@ -1,4 +1,5 @@
 ![](https://github.com/endpass/tokeninfo/workflows/tokeninfo%20master/badge.svg?branch=master)
+![](https://github.com/endpass/tokeninfo/workflows/tokeninfo%20release/badge.svg?branch=release)
 
 # tokeninfo
 Simple api to return info about Ethereum ERC20 tokens
