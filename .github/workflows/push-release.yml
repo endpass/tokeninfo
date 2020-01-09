@@ -1,8 +1,8 @@
-name: tokeninfo master
+name: tokeninfo release
 on: 
   push:
     branches:
-      - master
+      - release
     paths-ignore:
       - '**.md'
 
@@ -40,12 +40,12 @@ jobs:
         ECR_REPOSITORY: tokeninfo
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG -f Dockerfile .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
-        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
+        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG"
 
     - name: Logout of Amazon ECR
       if: always()
@@ -55,24 +55,24 @@ jobs:
       id: render-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: .github/tokeninfo-dev-task-definition.json
+        task-definition: .github/tokeninfo-staging-task-definition.json
         container-name: tokeninfo
         image: ${{ steps.build-image.outputs.image-latest }}
 
-    - name: Deploy to Amazon ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.render-container.outputs.task-definition }}
-        service: tokeninfo-dev-service
-        cluster: backend-cluster-dev
-        wait-for-service-stability: true
+#    - name: Deploy to Amazon ECS
+#      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#      with:
+#        task-definition: ${{ steps.render-container.outputs.task-definition }}
+#        service: tokeninfo-staging-service
+#        cluster: backend-cluster-staging
+#        wait-for-service-stability: true
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
       if: always()
       with:
         type: ${{ job.status }}
-        job_name: 'Build and Deploy tokeninfo binary (Master)'
+        job_name: 'Build and Deploy tokeninfo binary (Release)'
         username: 'GitHub Actions'
         icon_emoji: ':github:'
         url: ${{ secrets.SLACK_WEBHOOK }}
