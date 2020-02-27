@@ -38,14 +38,13 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: dev/tokeninfo
-        IMAGE_TAG: ${GITHUB_SHA::8}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG -f Dockerfile .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8} -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8} $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
-        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
+        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}"
 
     - name: Logout of Amazon ECR
       if: always()
