@@ -75,4 +75,4 @@ jobs:
         job_name: 'Build and Deploy tokeninfo binary (Release)'
         username: 'GitHub Actions'
         icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK }}
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
