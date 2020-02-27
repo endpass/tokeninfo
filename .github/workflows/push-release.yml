@@ -37,8 +37,8 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: tokeninfo
-        IMAGE_TAG: ${{ github.sha }}
+        ECR_REPOSITORY: staging/tokeninfo
+        IMAGE_TAG: ${GITHUB_SHA::8}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG -f Dockerfile .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
