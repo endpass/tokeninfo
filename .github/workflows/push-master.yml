@@ -16,6 +16,11 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v1
 
+    - name: get commit short SHA
+      id: vars
+      run: |
+        echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -37,8 +42,8 @@ jobs:
       id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: tokeninfo
-        IMAGE_TAG: ${{ github.sha }}
+        ECR_REPOSITORY: dev/tokeninfo
+        IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG -f Dockerfile .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
@@ -75,4 +80,4 @@ jobs:
         job_name: 'Build and Deploy tokeninfo binary (Master)'
         username: 'GitHub Actions'
         icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK }}
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
