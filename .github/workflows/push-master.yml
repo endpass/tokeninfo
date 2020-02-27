@@ -16,6 +16,11 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v1
 
+    - name: get commit short SHA
+      id: vars
+      run: |
+        echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -38,13 +43,14 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: dev/tokeninfo
+        IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8} -f Dockerfile .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8} $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG -f Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev-latest
-        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}"
-        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-${GITHUB_SHA::8}"
+        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:dev-$IMAGE_TAG"
 
     - name: Logout of Amazon ECR
       if: always()
