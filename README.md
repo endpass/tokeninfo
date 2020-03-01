@@ -23,3 +23,4 @@ Returns an array of objects with information about all tokens
 
 ### /api/v1/token/{symbol}
 Returns an object with information about a specific token
+TEST
