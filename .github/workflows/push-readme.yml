@@ -1,0 +1,46 @@
+name: update internal docs
+on: 
+  push:
+    branches:
+      - master
+    paths:
+      - 'README.md'
+
+jobs:
+  readme_update:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+
+    - name: Checkout repo
+      uses: actions/checkout@v2
+      with:
+        path: 'tokeninfo'
+
+    - name: Checkout endpass-docs repo
+      uses: actions/checkout@v2
+      with:
+        repository: 'endpass/endpass-docs'
+        token: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+        path: 'endpass-docs'
+
+    - name: Copy README.md to endpass-docs repo
+      run: |
+        cp $GITHUB_WORKSPACE/tokeninfo/README.md $GITHUB_WORKSPACE/endpass-docs/api/tokeninfo.md
+        cd $GITHUB_WORKSPACE/endpass-docs
+        git config user.email "actions@endpass.com"
+        git config user.name "Tokeninfo repo GH Actions"
+        git add api/tokeninfo.md
+        git commit -m "Update api/tokeninfo.md"
+        git push
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: 'Update tokeninfo.md in endpass-docs repo'
+        username: 'GitHub Actions'
+        icon_emoji: ':github:'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
