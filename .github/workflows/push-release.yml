@@ -22,6 +22,11 @@ jobs:
       run: |
         echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
 
+    - name: get commit short SHA
+      id: vars
+      run: |
+        echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
