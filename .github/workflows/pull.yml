@@ -1,4 +1,5 @@
-name: pull
+---
+name: tests after PR
 on:
   pull_request:
     branches:
