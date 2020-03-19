@@ -1,4 +1,5 @@
-name: tokeninfo release
+---
+name: release build and deploy
 on: 
   push:
     branches:
@@ -9,12 +10,12 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
 
     - name: Checkout repo
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: get commit short SHA
       id: vars
@@ -33,7 +34,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Download tokens-eth.json
-      run: wget https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
+      run: wget -q https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
 
     - name: Download TrustWallet tokens
       run: aws s3 sync s3://endpass-trustwallet-tokens/ ./tokens/
