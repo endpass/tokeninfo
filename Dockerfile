@@ -6,7 +6,7 @@ RUN apk add --no-cache \
     build-base \
     ca-certificates
 
-ENV GOPRIVATE=github.com/machinae
+ENV GOPRIVATE=github.com/endpass
 ENV GOPROXY=https://proxy.golang.org,direct
 ENV GO111MODULE=on
 
