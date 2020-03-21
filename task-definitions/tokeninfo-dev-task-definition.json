@@ -33,7 +33,7 @@
             "mountPoints": [],
             "secrets": [],
             "volumesFrom": [],
-            "image": "590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo:dev-latest",
+            "image": "590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo:latest",
             "essential": true,
             "readonlyRootFilesystem": true,
             "name": "tokeninfo"
