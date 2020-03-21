@@ -8,11 +8,8 @@ on:
 
 jobs:
   tests:
-
     runs-on: ubuntu-18.04
-
     steps:
-
     - name: Checkout repo
       uses: actions/checkout@v2
 
@@ -22,8 +19,7 @@ jobs:
         go-version: 1.13
 
     - name: Run tests
-      run: |
-        make test
+      run: make test
 
     - name: Slack Notification
       uses: homoluctus/slatify@master

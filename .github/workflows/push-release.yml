@@ -8,19 +8,15 @@ on:
       - '**.md'
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-18.04
-
     steps:
-
     - name: Checkout repo
       uses: actions/checkout@v2
 
     - name: get commit short SHA
       id: vars
-      run: |
-        echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
+      run: echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -46,12 +42,12 @@ jobs:
         ECR_REPOSITORY: staging/tokeninfo
         IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG -f Dockerfile .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
-        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG"
-        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:staging-$IMAGE_TAG"
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f docker/Dockerfile .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     - name: Logout of Amazon ECR
       if: always()
@@ -61,7 +57,7 @@ jobs:
       id: render-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: .github/tokeninfo-staging-task-definition.json
+        task-definition: task-definitions/tokeninfo-staging-task-definition.json
         container-name: tokeninfo
         image: ${{ steps.build-image.outputs.image-latest }}
 

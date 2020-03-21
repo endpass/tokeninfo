@@ -2,24 +2,19 @@
     "executionRoleArn": "arn:aws:iam::573926759023:role/endpass-tokeninfo-prod-ecs-execution-role",
     "containerDefinitions": [
         {
-            "dnsSearchDomains": null,
             "logConfiguration": {
                 "logDriver": "awslogs",
-                "secretOptions": null,
                 "options": {
                     "awslogs-group": "/ecs/prod/tokeninfo",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
             },
-            "entryPoint": null,
             "portMappings": [
                 {
                     "containerPort": 8000
                 }
             ],
-            "command": null,
-            "linuxParameters": null,
             "cpu": 0,
             "environment": [
                 {
@@ -35,34 +30,12 @@
                     "value": "/data/tokens"
                 }
             ],
-            "resourceRequirements": null,
-            "ulimits": null,
-            "dnsServers": null,
             "mountPoints": [],
-            "workingDirectory": null,
             "secrets": [],
-            "dockerSecurityOptions": null,
-            "memory": null,
-            "memoryReservation": null,
             "volumesFrom": [],
-            "stopTimeout": null,
             "image": "573926759023.dkr.ecr.us-east-1.amazonaws.com/prod/tokeninfo:latest",
-            "startTimeout": null,
-            "firelensConfiguration": null,
-            "dependsOn": null,
-            "disableNetworking": null,
-            "interactive": null,
-            "healthCheck": null,
             "essential": true,
-            "links": null,
-            "hostname": null,
-            "extraHosts": null,
-            "pseudoTerminal": null,
-            "user": null,
             "readonlyRootFilesystem": true,
-            "dockerLabels": null,
-            "systemControls": null,
-            "privileged": null,
             "name": "tokeninfo"
         }
     ],
@@ -70,7 +43,6 @@
     "memory": "512",
     "taskRoleArn": "arn:aws:iam::573926759023:role/endpass-tokeninfo-prod-ecs-task-role",
     "family": "tokeninfo-prod-td",
-    "pidMode": null,
     "requiresCompatibilities": [
         "FARGATE"
     ],
