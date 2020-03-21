@@ -9,11 +9,8 @@ on:
 
 jobs:
   readme_update:
-
     runs-on: ubuntu-18.04
-
     steps:
-
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
