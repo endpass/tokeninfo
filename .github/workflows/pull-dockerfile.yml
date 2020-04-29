@@ -1,0 +1,32 @@
+name: dockerfile lint
+on:
+  pull_request:
+    branches:
+      - master
+      - release
+    paths:
+      - "docker/Dockerfile"
+
+jobs:
+  dockerfile_lint:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: dockerfile sweep for best practices
+      uses: burdzwastaken/hadolint-action@master
+      env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         HADOLINT_ACTION_DOCKERFILE_FOLDER: docker/
+         HADOLINT_ACTION_COMMENT: false
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: '*${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}* - Dockerfile linting'
+        username: 'GitHub Actions'
+        icon_emoji: ':github:'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
