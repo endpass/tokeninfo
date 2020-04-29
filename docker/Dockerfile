@@ -1,10 +1,10 @@
-FROM golang:1.13.9-alpine3.11 as builder
+FROM golang:1.13.10-alpine3.11 as builder
 
 RUN apk add --no-cache \
-    git \
-    curl \
-    build-base \
-    ca-certificates
+    git=2.24.3-r0 \
+    curl=7.67.0-r0 \
+    build-base=0.5-r1 \
+    ca-certificates=20191127-r1
 
 ENV GOPRIVATE=github.com/endpass
 ENV GOPROXY=https://proxy.golang.org,direct
@@ -12,6 +12,8 @@ ENV GO111MODULE=on
 
 WORKDIR /app
 COPY . .
+ADD https://github.com/trustwallet/tokens/tree/master/tokens /app/tokens
+ADD https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json /app/tokens-eth.json
 
 RUN go mod download && \
     GOOS=linux GOARCH=amd64 go build -a -tags netgo \

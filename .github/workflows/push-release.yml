@@ -1,4 +1,3 @@
----
 name: release build and deploy
 on: 
   push:
@@ -29,12 +28,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Download tokens-eth.json
-      run: wget -q https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/tokens-eth.json
-
-    - name: Download TrustWallet tokens
-      run: aws s3 sync s3://endpass-trustwallet-tokens/ ./tokens/
-
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -47,7 +40,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=image-latest::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
 
     - name: Logout of Amazon ECR
       if: always()
@@ -59,7 +52,7 @@ jobs:
       with:
         task-definition: task-definitions/tokeninfo-staging-task-definition.json
         container-name: tokeninfo
-        image: ${{ steps.build-image.outputs.image-latest }}
+        image: ${{ steps.build-image.outputs.image-hash }}
 
     - name: Deploy to Amazon ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
