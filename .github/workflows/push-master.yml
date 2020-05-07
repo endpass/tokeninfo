@@ -62,12 +62,3 @@ jobs:
         cluster: backend-cluster-dev
         wait-for-service-stability: true
 
-    - name: Slack Notification
-      uses: homoluctus/slatify@master
-      if: always()
-      with:
-        type: ${{ job.status }}
-        job_name: 'Build and Deploy tokeninfo binary (Master)'
-        username: 'GitHub Actions'
-        icon_emoji: ':github:'
-        url: ${{ secrets.SLACK_WEBHOOK_URL }}
