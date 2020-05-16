@@ -19,14 +19,18 @@ jobs:
     - name: Run tests
       run: make test
 
-    - name: Deploy
-      uses: 'deliverybot/helm@v1'
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        release: 'nginx'
-        namespace: 'dev'
-        chart: 'app'
-        token: '${{ github.token }}'
-        values: |
-          name: foobar
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: deploy postgres to cluster
+      uses: wahyd4/kubectl-helm-action@master
       env:
-        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+        KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+      with:
+        args: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm upgrade --install postgres -n dev bitnami/postgresql 
