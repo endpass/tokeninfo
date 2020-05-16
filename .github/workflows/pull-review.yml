@@ -11,14 +11,6 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-
-    - name: Run tests
-      run: make test
-
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -26,11 +18,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: deploy postgres to cluster
-      uses: wahyd4/kubectl-helm-action@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
-      with:
-        args: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm upgrade --install postgres -n dev bitnami/postgresql 
+    - name: Run Kubernetes tools
+      uses: stefanprodan/kube-tools@v1
+
+    - name: test install
+      run: |
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm upgrade --install postgres -n data bitnami/postgresql        
