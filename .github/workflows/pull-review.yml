@@ -23,5 +23,6 @@ jobs:
 
     - name: test install
       run: |
+        kubectl version
         helm repo add bitnami https://charts.bitnami.com/bitnami
-        helm upgrade --install postgres -n data bitnami/postgresql        
+        helm upgrade --install postgres -n dev bitnami/postgresql        
