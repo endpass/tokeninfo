@@ -1,0 +1,12 @@
+name: PRCleanup
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  pr-close:
+    runs-on: 'ubuntu-latest'
+    steps:
+    - name: 'remove'
+      run: |
+        echo 'remove pr${{ github.event.pull_request.number }}'
