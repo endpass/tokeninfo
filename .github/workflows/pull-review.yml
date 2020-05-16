@@ -1,0 +1,32 @@
+name: review
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+
+    - name: Run tests
+      run: make test
+
+    - name: Deploy
+      uses: 'deliverybot/helm@v1'
+      with:
+        release: 'nginx'
+        namespace: 'dev'
+        chart: 'app'
+        token: '${{ github.token }}'
+        values: |
+          name: foobar
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
