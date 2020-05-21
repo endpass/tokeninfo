@@ -26,7 +26,7 @@ jobs:
     steps:
     - name: get pull request ref
       id: get_pull_request_ref
-      uses: octokit/request-action@2.x
+      uses: octokit/request-action@v2.x
       with:
         route: GET /repos/:repository/pulls/:issue_id
         repository: ${{ github.repository }}
@@ -36,7 +36,7 @@ jobs:
 
     - name: create deployment
       id: create_deployment
-      uses: octokit/request-action@2.x
+      uses: octokit/request-action@v2.x
       with:
         route: POST /repos/:repository/deployments
         repository: ${{ github.repository }}
@@ -48,7 +48,7 @@ jobs:
 
     - name: set deployment status to in progress
       id: start_deployment
-      uses: octokit/request-action@2.x
+      uses: octokit/request-action@v2.x
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
@@ -68,7 +68,7 @@ jobs:
 
     - name: set deployment status to success
       id: successful_deployment
-      uses: octokit/request-action@2.x
+      uses: octokit/request-action@v2.x
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
@@ -83,7 +83,7 @@ jobs:
 
     - name: set deployment status to failure
       id: failed_deployment
-      uses: octokit/request-action@2.x
+      uses: octokit/request-action@v2.x
       if: failure()
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
