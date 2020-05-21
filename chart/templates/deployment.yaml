@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tokeninfo
+    env: dev
+  name: tokeninfo
+  namespace: dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tokeninfo
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: tokeninfo
+        env: dev
+    spec:
+      containers:
+        - name: tokeninfo
+          image: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo:c5b232c1
+          env:
+            - name: ENV
+              value: "development"
+            - name: TOKEN_LIST
+              value: "/data/tokens-eth.json"
+            - name: TOKEN_IMAGE_DIR
+              value: "/data/tokens"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            timeoutSeconds: 10
+            initialDelaySeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+      serviceAccountName: tokeninfo
