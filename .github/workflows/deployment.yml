@@ -57,7 +57,7 @@ jobs:
         environment_url: 'https://tokeninfo-test.endpass.com'
         log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         state: 'in_progress'
-        media_type: '{"previews": ["flash", "ant-man"]}'
+        mediaType: '{"previews": ["flash", "ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -77,7 +77,7 @@ jobs:
         environment_url: 'https://tokeninfo-test.endpass.com'
         log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         state: 'success'
-        media_type: '{"previews": ["ant-man"]}'
+        mediaType: '{"previews": ["ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -93,6 +93,6 @@ jobs:
         environment_url: 'https://tokeninfo-test.endpass.com'
         log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
         state: 'failure'
-        media_type: '{"previews": ["ant-man"]}'
+        mediaType: '{"previews": ["ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
