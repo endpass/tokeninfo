@@ -52,11 +52,11 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: test
-        environment_url: https://tokeninfo-test.endpass.com
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: in_progress
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        environment: 'test'
+        environment_url: 'https://tokeninfo-test.endpass.com'
+        log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        state: 'in_progress'
         media_type: '{"previews": ["flash", "ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
@@ -72,11 +72,11 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: test
-        environment_url: https://tokeninfo-test.endpass.com
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: success
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        environment: 'test'
+        environment_url: 'https://tokeninfo-test.endpass.com'
+        log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        state: 'success'
         media_type: '{"previews": ["ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
@@ -88,11 +88,11 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: test
-        environment_url: https://tokeninfo-test.endpass.com
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: failure
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        environment: 'test'
+        environment_url: 'https://tokeninfo-test.endpass.com'
+        log_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        state: 'failure'
         media_type: '{"previews": ["ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
