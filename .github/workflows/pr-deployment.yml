@@ -30,8 +30,9 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
         environment: testing
-        environment_url: https://${{ fromJson(steps.create_deployment.outputs.data).id }}.test.endpass.com
+        environment_url: https://${{ github.event.pull_request.title }}.test.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: in_progress
         media_type: '{"previews": ["flash", "ant-man"]}'
@@ -49,9 +50,9 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
         environment: testing
-        environment_url: https://${{ fromJson(steps.create_deployment.outputs.data).id }}.test.endpass.com
+        environment_url: https://${{ github.event.pull_request.title }}.test.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: success
         media_type: '{"previews": ["ant-man"]}'
@@ -65,9 +66,9 @@ jobs:
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+        deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
         environment: testing
-        environment_url: https://${{ fromJson(steps.create_deployment.outputs.data).id }}.test.endpass.com
+        environment_url: https://${{ github.event.pull_request.title }}.test.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: failure
         media_type: '{"previews": ["ant-man"]}'
