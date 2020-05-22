@@ -1,0 +1,15 @@
+name: pull-request-undeployment
+
+on:
+  pull_request:
+    types: [unlabeled,closed]
+
+jobs:  
+  undeploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: undeployment logic
+      run: |
+        sleep 10
+        exit $(( $RANDOM % 10 >= 5))

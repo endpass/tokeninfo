@@ -9,12 +9,12 @@ on:
 
 jobs:
   dockerfile_lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: dockerfile sweep for best practices
+    - name: Dockerfile linting for best practices
       uses: burdzwastaken/hadolint-action@master
       env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
