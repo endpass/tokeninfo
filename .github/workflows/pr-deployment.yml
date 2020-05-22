@@ -21,6 +21,7 @@ jobs:
         ref: ${{ github.ref }}
         environment: testing
         auto_merge: false
+        transient_environment: true
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
