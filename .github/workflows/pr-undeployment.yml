@@ -8,8 +8,24 @@ jobs:
   undeploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+  
+    - name: extract branch name
+      id: get_branch
+      shell: bash
+      env:
+        PR_HEAD: ${{ github.head_ref }}
+      run: echo "##[set-output name=branch;]$(echo ${PR_HEAD#refs/heads/} | tr / -)"
 
     - name: undeployment logic
       run: |
-        sleep 10
-        exit $(( $RANDOM % 10 >= 5))
+        exit 0
+        
+    - name: mark environment as deactivated
+      uses: bobheadxi/deployments@master
+      with:
+        step: deactivate-env
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: testing
+        desc: Deployment was pruned
