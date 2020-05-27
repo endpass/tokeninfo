@@ -5,7 +5,7 @@ metadata:
     app: tokeninfo
     env: dev
   name: tokeninfo
-  namespace: dev
+  namespace: {{ template "tokeninfo.namespace" . }}
 spec:
   ports:
     - port: 8000

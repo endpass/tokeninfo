@@ -1,8 +1,8 @@
----
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: tokeninfo-ingressroute
+  namespace: {{ template "tokeninfo.namespace" . }}
   labels:
     app: tokeninfo
     env: dev

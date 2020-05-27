@@ -1,0 +1,47 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: tokeninfo
+  namespace: {{ template "tokeninfo.namespace" . }}
+  labels:
+    app: tokeninfo
+    env: dev
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default'
+    seccomp.security.alpha.kubernetes.io/defaultProfileName:  'docker/default'
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    # Default set from Docker, without DAC_OVERRIDE or CHOWN
+    - FOWNER
+    - FSETID
+    - KILL
+    - SETGID
+    - SETUID
+    - SETPCAP
+    - NET_BIND_SERVICE
+    - NET_RAW
+    - SYS_CHROOT
+    - MKNOD
+    - AUDIT_WRITE
+    - SETFCAP
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'
+  readOnlyRootFilesystem: false

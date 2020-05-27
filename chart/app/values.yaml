@@ -1,0 +1,16 @@
+replicas: 1
+
+## See `kubectl explain poddisruptionbudget.spec` for more
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget: {}
+#  minAvailable: 1
+#  maxUnavailable: 1
+
+image:
+  # image.repository -- Docker image repository.
+  repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo
+  # image.tag -- Docker image tag.
+  tag: latest
+  pullPolicy: IfNotPresent
+
+namespaceOverride: ""

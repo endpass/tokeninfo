@@ -5,7 +5,7 @@ metadata:
     app: tokeninfo
     env: dev
   name: tokeninfo
-  namespace: dev
+  namespace: {{ template "tokeninfo.namespace" . }}
 spec:
   replicas: 2
   selector:
@@ -24,15 +24,24 @@ spec:
     spec:
       containers:
         - name: tokeninfo
-          image: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo:c5b232c1
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           env:
             - name: ENV
-              value: "development"
+              valueFrom:
+                configMapKeyRef:
+                  name: tokeninfo
+                  key: env
             - name: TOKEN_LIST
-              value: "/data/tokens-eth.json"
+              valueFrom:
+                configMapKeyRef:
+                  name: tokeninfo
+                  key: token_list
             - name: TOKEN_IMAGE_DIR
-              value: "/data/tokens"
-          imagePullPolicy: Always
+              valueFrom:
+                configMapKeyRef:
+                  name: tokeninfo
+                  key: token_image_dir
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8000
               protocol: TCP
@@ -52,4 +61,3 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-      serviceAccountName: tokeninfo

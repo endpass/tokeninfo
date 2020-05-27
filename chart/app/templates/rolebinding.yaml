@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: tokeninfo
+  namespace: {{ template "tokeninfo.namespace" . }}
+  labels:
+    app: tokeninfo
+    env: dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tokeninfo
+subjects:
+- kind: ServiceAccount
+  name: tokeninfo
+  namespace: {{ template "tokeninfo.namespace" . }}
