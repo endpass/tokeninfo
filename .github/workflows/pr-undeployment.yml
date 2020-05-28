@@ -24,7 +24,7 @@ jobs:
         task: 'remove'
         release: tokeninfo
         namespace: review
-        chart: app
+        chart: ./charts/tokeninfo
         helm: helm3
         version: ${{ github.sha }} 
       env:
