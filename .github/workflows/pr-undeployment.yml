@@ -11,16 +11,17 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
   
-    - name: extract branch name
-      id: get_branch
-      shell: bash
+    - name: Undeploy
+      uses: gridwave/helm-deployer@master
+      with:
+        task: 'remove'
+        release: tokeninfo
+        namespace: review
+        chart: app
+        helm: helm3
+        version: ${{ github.sha }} 
       env:
-        PR_HEAD: ${{ github.head_ref }}
-      run: echo "##[set-output name=branch;]$(echo ${PR_HEAD#refs/heads/} | tr / -)"
-
-    - name: undeployment logic
-      run: |
-        exit 0
+        KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
         
     - name: mark environment as deactivated
       uses: bobheadxi/deployments@master
