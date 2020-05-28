@@ -75,7 +75,7 @@ jobs:
       with:
         release: tokeninfo
         namespace: review
-        chart: ./chart/tokeninfo
+        chart: ./charts/tokeninfo
         helm: helm3
         version: ${{ github.sha }} 
         values: |
