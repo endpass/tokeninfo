@@ -82,6 +82,7 @@ jobs:
           image.tag: ${{ steps.vars.outputs.sha_short }}
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
+        HELM_3_FILE: "helm-v3.2.1-linux-amd64.tar.gz"
 
     - name: set deployment status to success
       id: successful_deployment
