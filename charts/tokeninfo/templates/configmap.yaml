@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tokeninfo
+  namespace: {{ template "tokeninfo.namespace" . }}
+  labels:
+    app: tokeninfo
+    env: dev
+data:
+  env: "development"
+  token_list: "/data/tokens-eth.json"
+  token_image_dir: "/data/tokens"

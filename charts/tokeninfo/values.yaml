@@ -1,0 +1,10 @@
+replicas: 1
+
+image:
+  # image.repository -- Docker image repository.
+  repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo
+  # image.tag -- Docker image tag.
+  tag: latest
+  pullPolicy: IfNotPresent
+
+namespaceOverride: ""

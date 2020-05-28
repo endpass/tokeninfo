@@ -1,6 +1,8 @@
 apiVersion: v2
+appVersion: 0.1
 name: tokeninfo
 description: A Helm chart for tokeninfo application
 type: application
+sources:
+- https://github.com/endpass/tokeninfo
 version: 0.1.0
-appVersion: 1.0
