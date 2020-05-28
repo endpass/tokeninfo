@@ -70,20 +70,16 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
-    - name: Test aws
-      run: |
-        aws version
-
     - name: Deploy
       uses: deliverybot/helm@v1
       with:
         release: tokeninfo
         namespace: review
         chart: app
+        helm: helm3
         values: |
           image.repository: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
           image.tag: ${{ steps.vars.outputs.sha_short }}
-        version: helm3
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
 
