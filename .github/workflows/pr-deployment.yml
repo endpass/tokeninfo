@@ -79,7 +79,7 @@ jobs:
         version: ${{ github.sha }}
         value-files: ./charts/tokeninfo/values.yaml
         values: |
-          deployment.image.repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/review/tokeninfo
+          - deployment.image.repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/review/tokeninfo
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
 
