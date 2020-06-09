@@ -1,8 +1,10 @@
 apiVersion: v2
-appVersion: 0.1
+appVersion: 0.1.0
 name: tokeninfo
-description: A Helm chart for tokeninfo application
+description: Simple api to return info about Ethereum ERC20 tokens
+engine: gotpl
+home: https://tokeninfo.endpass.com/
 type: application
 sources:
-- https://github.com/endpass/tokeninfo
+- https://github.com/endpass/tokeninfo/
 version: 0.1.0

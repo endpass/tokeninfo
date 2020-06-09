@@ -1,10 +1,26 @@
-replicas: 1
+---
+environment: development
+service:
+  port: 8000
+deployment:
+  replicaCount: 1
+  image:
+    repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo
+    tag: latest
+    pullPolicy: IfNotPresent
+configmap:
 
-image:
-  # image.repository -- Docker image repository.
-  repository: 590256513590.dkr.ecr.us-east-1.amazonaws.com/dev/tokeninfo
-  # image.tag -- Docker image tag.
-  tag: latest
-  pullPolicy: IfNotPresent
-
-namespaceOverride: ""
+ingress:
+  enabled: false
+  annotations: {}
+    
+  path: /
+  host: tokeninfo-dev.endpass.com
+    
+ingressroute:
+  enabled: true
+  annotations: {}
+    
+  entrypoints:
+    - web
+  host: tokeninfo-dev.endpass.com

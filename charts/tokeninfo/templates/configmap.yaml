@@ -1,12 +1,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tokeninfo
-  namespace: {{ template "tokeninfo.namespace" . }}
+  name: {{ template "tokeninfo.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: tokeninfo
-    env: dev
+    app: {{ template "tokeninfo.name" . }}
+    environment: {{ .Values.environment }}
+    chart: {{ template "tokeninfo.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 data:
-  env: "development"
+  env: {{ .Values.environment | quote }}
   token_list: "/data/tokens-eth.json"
   token_image_dir: "/data/tokens"

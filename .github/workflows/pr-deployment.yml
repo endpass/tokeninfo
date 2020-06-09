@@ -1,4 +1,4 @@
-name: pull-request-deployment
+name: pull-request-review-deployment
 
 on:
   pull_request:
@@ -33,7 +33,7 @@ jobs:
         repository: ${{ github.repository }}
         deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
         environment: review
-        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.test.endpass.com
+        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: in_progress
         mediaType: '{"previews": ["flash", "ant-man"]}'
@@ -41,11 +41,11 @@ jobs:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
 #
-# Build and deployment logic
+# Start of build and deployment logic
 #
     
     - name: get commit short SHA
-      id: vars
+      id: short_sha_tag
       run: echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
 
     - name: Configure AWS Credentials
@@ -64,7 +64,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: review/tokeninfo
-        IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
+        IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
       run: |
         docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f docker/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -76,13 +76,26 @@ jobs:
         release: tokeninfo
         namespace: review
         chart: ./charts/tokeninfo
-        helm: helm3
         version: ${{ github.sha }} 
         values: |
           image.repository: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
           image.tag: ${{ steps.vars.outputs.sha_short }}
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
+
+    - name: Create DNS record
+      id: create_dns_record
+      env:
+        RESOURCE_RECORD_NAME: ${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
+        RESOURCE_RECORD_VALUE: ${{ secrets.RESOURCE_RECORD_VALUE }}
+      run: |
+        aws route53 change-resource-record-sets --hosted-zone-id ${{ secrets.HOSTEDZONE_ID }} \
+        --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": "'"$RESOURCE_RECORD_NAME"'", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "'"$RESOURCE_RECORD_VALUE"'" } ] } } ] }'
+        
+
+#
+# End of build and deployment logic
+#
 
     - name: set deployment status to success
       id: successful_deployment
@@ -91,8 +104,8 @@ jobs:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
         deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: testing
-        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.test.endpass.com
+        environment: review
+        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: success
         mediaType: '{"previews": ["ant-man"]}'
@@ -107,8 +120,8 @@ jobs:
         route: POST /repos/:repository/deployments/:deployment/statuses
         repository: ${{ github.repository }}
         deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
-        environment: testing
-        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.test.endpass.com
+        environment: review
+        environment_url: https://${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: failure
         mediaType: '{"previews": ["ant-man"]}'
