@@ -29,8 +29,8 @@ jobs:
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
 
-    - name: Create DNS record
-      id: create_dns_record
+    - name: Delete DNS record
+      id: delete_dns_record
       env:
         RESOURCE_RECORD_NAME: ${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         RESOURCE_RECORD_VALUE: ${{ secrets.RESOURCE_RECORD_VALUE }}
