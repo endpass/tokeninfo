@@ -78,8 +78,8 @@ jobs:
         chart: ./charts/tokeninfo
         version: ${{ github.sha }} 
         values: |
-          image.repository: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
-          image.tag: ${{ steps.vars.outputs.sha_short }}
+          deployment.image.repository: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
+          deployment.image.tag: ${{ steps.vars.outputs.sha_short }}
           ingressroute.host: ${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
@@ -98,7 +98,7 @@ jobs:
 # End of build and deployment logic
 #
 
-    - name: set deployment status to success
+    - name: Set deployment status to success
       id: successful_deployment
       uses: octokit/request-action@v2.x
       with:
@@ -113,7 +113,7 @@ jobs:
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: set deployment status to failure
+    - name: Set deployment status to failure
       id: failed_deployment
       uses: octokit/request-action@v2.x
       if: failure()
