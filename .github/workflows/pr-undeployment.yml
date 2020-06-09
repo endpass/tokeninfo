@@ -1,4 +1,4 @@
-name: pull-request-undeployment
+name: pull-request-review-undeployment
 
 on:
   pull_request:
@@ -25,12 +25,20 @@ jobs:
         release: tokeninfo
         namespace: review
         chart: ./charts/tokeninfo
-        helm: helm3
         version: ${{ github.sha }} 
       env:
         KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"
+
+    - name: Create DNS record
+      id: create_dns_record
+      env:
+        RESOURCE_RECORD_NAME: ${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
+        RESOURCE_RECORD_VALUE: ${{ secrets.RESOURCE_RECORD_VALUE }}
+      run: |
+        aws route53 change-resource-record-sets --hosted-zone-id ${{ secrets.HOSTEDZONE_ID }} \
+        --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "DELETE", "ResourceRecordSet": { "Name": "'"$RESOURCE_RECORD_NAME"'", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "'"$RESOURCE_RECORD_VALUE"'" } ] } } ] }'
         
-    - name: mark environment as deactivated
+    - name: Mark environment as deactivated
       uses: bobheadxi/deployments@master
       with:
         step: deactivate-env
