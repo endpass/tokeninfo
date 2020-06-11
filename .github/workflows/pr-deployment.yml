@@ -18,8 +18,9 @@ jobs:
       env:
         WERF_VERSION: v1.1.14+fix1
       run: |
-        curl -L https://dl.bintray.com/flant/werf/$WERF_VERSION/werf-linux-amd64-$WERF_VERSION -o /usr/local/bin/werf
-        chmod +x /usr/local/bin/werf
+        mkdir -p $HOME/bin && curl -L https://dl.bintray.com/flant/werf/$WERF_VERSION/werf-linux-amd64-$WERF_VERSION -o $HOME/bin/werf
+        chmod +x $HOME/bin/werf
+        export PATH=$PATH:$HOME/bin
         werf version
 
     - name: Create kubeconfig
