@@ -1,0 +1,5 @@
+project: tokeninfo
+configVersion: 1
+---
+image: tokeninfo
+dockerfile: docker/Dockerfile
