@@ -86,7 +86,7 @@ jobs:
         IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        . $(werf ci-env github --as-file --verbose)
+        werf ci-env github --as-file --verbose
         werf build-and-publish --stages-storage :local --tag-custom $IMAGE_TAG --images-repo $ECR_REGISTRY/$ECR_REPOSITORY
         echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
