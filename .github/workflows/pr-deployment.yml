@@ -25,9 +25,9 @@ jobs:
 
     - name: Create kubeconfig
       run: |
-        KUBECONFIG=$(mktemp)/config
-        echo $BASE64_KUBECONFIG | base64 -d -w0 > $BASE64_KUBECONFIG
-        echo ::set-env name=KUBECONFIG::$BASE64_KUBECONFIG
+        KUBECONFIG=$(mktemp -d)/config
+        echo $BASE64_KUBECONFIG | base64 -d -w0 > $KUBECONFIG
+        echo ::set-env name=KUBECONFIG::$KUBECONFIG
       env:
         BASE64_KUBECONFIG: ${{ secrets.BASE64_KUBECONFIG }}
       
