@@ -16,11 +16,10 @@ jobs:
 
     - name: Install werf
       env:
-        WERF_VERSION: v1.1.14+fix1
+        WERF_VERSION: v1.1.16+fix8
       run: |
         mkdir -p $HOME/bin && curl -L https://dl.bintray.com/flant/werf/$WERF_VERSION/werf-linux-amd64-$WERF_VERSION -o $HOME/bin/werf
         chmod +x $HOME/bin/werf
-        export PATH=$PATH:$HOME/bin
         echo "::add-path::$HOME/bin"
 
     - name: Create kubeconfig
@@ -85,9 +84,10 @@ jobs:
         ECR_REPOSITORY: review/tokeninfo
         IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WERF_STAGES_STORAGE: ${{ ECR_REGISTRY }}/stages
+        WERF_IMAGES_REPO: ${{ ECR_REGISTRY }}/${{ ECR_REPOSITORY }}
       run: |
-        . $(werf ci-env github --as-file --verbose)
-        werf build-and-publish
+        werf build-and-publish --tag-git-commit ${{ sha_short }}
         echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
     - name: Create DNS record
