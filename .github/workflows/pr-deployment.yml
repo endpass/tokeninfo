@@ -85,7 +85,7 @@ jobs:
         IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages
-        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
+        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
       run: |
         werf build-and-publish --tag-git-commit $IMAGE_TAG
         echo "::set-output name=image-hash::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
