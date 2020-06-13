@@ -92,12 +92,11 @@ jobs:
       env:
         WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
         WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-release
+        WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run:
         werf deploy --release tokeninfo --namespace review --env review \
-        --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) \
-        --helm-release-storage-namespace werf-releases \
-        --helm-release-storage-type secret
+        --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
         
     - name: Create DNS record
       id: create_dns_record
