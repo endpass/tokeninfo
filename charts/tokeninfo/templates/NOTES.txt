@@ -1,3 +1,0 @@
-The tokeninfo application has been deployed to your cluster.
-
-See https://github.com/endpass/tokeninfo/blob/master/README.md for more detail.
