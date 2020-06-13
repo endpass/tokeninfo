@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    environment: {{ .Values.global.env }}
+data:
+  env: {{ .Values.environment | quote }}
+  token_list: "/data/tokens-eth.json"
+  token_image_dir: "/data/tokens"

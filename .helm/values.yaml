@@ -1,0 +1,22 @@
+---
+environment: development
+service:
+  port: 8000
+deployment:
+  replicaCount: 1
+configmap:
+
+ingress:
+  enabled: false
+  annotations: {}
+    
+  path: /
+  host: tokeninfo-dev.endpass.com
+    
+ingressroute:
+  enabled: true
+  annotations: {}
+    
+  entrypoints:
+    - web
+  host: tokeninfo-dev.endpass.com

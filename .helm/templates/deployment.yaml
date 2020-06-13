@@ -1,31 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.global.namespace }}
   labels:
-    app: tokeninfo
-    env: dev
-  name: tokeninfo
-  namespace: {{ template "tokeninfo.namespace" . }}
+    app: {{ .Chart.Name }}
+    environment: {{ .Values.global.env }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.deployment.replicaCount }}
   selector:
     matchLabels:
-      app: tokeninfo
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
+      app: {{ .Chart.Name }}
   template:
     metadata:
       labels:
-        app: tokeninfo
-        env: dev
+        app: {{ .Chart.Name }}
+        environment: {{ .Values.global.env }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
-        - name: tokeninfo
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        - name: {{ .Chart.Name }}
+{{ werf_container_image . | indent 10 }}
           env:
+{{ werf_container_env . | indent 12 }}
             - name: ENV
               valueFrom:
                 configMapKeyRef:
@@ -41,9 +39,9 @@ spec:
                 configMapKeyRef:
                   name: tokeninfo
                   key: token_image_dir
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8000
+            - name: http
+              containerPort: 8000
               protocol: TCP
           livenessProbe:
             httpGet:
