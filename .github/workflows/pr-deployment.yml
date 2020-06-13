@@ -82,7 +82,7 @@ jobs:
       env:
         IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
         WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
-        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
+        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         werf build-and-publish --tag-git-commit $IMAGE_TAG
