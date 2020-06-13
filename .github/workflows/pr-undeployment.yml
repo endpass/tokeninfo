@@ -44,8 +44,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-releases
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
-        werf dismiss --release tokeninfo --namespace review --env review &&
-        werf purge --log-verbose
+        werf dismiss --release tokeninfo --namespace review --env review --log-verbose --log-debug
   
     - name: Delete DNS record
       id: delete_dns_record
