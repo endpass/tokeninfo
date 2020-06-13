@@ -86,6 +86,15 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         werf build-and-publish --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
+
+    - name: Deploy to k8s
+      id: deploy-to-k8s
+      env:
+        WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
+        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        werf deploy --release tokeninfo --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
         
     - name: Create DNS record
       id: create_dns_record
