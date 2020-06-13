@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     app: {{ .Chart.Name }}
-    environment: {{ .Values.global.environment }}
+    environment: {{ .Values.global.env }}
 spec:
   ports:
     - port: {{ .Values.service.port }}

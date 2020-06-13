@@ -5,8 +5,8 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     app: {{ .Chart.Name }}
-    environment: {{ .Values.global.environment }}
+    environment: {{ .Values.global.env }}
 data:
-  env: {{ .Values.global.environment | quote }}
+  env: {{ .Values.environment | quote }}
   token_list: "/data/tokens-eth.json"
   token_image_dir: "/data/tokens"

@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.global.namespace }}
   labels:
     app: {{ .Chart.Name }}
-    environment: {{ .Values.global.environment }}
+    environment: {{ .Values.global.env }}
 spec:
   replicas: {{ .Values.deployment.replicaCount }}
   selector:
@@ -15,15 +15,15 @@ spec:
     metadata:
       labels:
         app: {{ .Chart.Name }}
-        environment: {{ .Values.global.environment }}
+        environment: {{ .Values.global.env }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-{{ werf_container_image . | indent 8 }}
+{{ werf_container_image . | indent 10 }}
           env:
-{{ werf_container_env . | indent 8 }}
+{{ werf_container_env . | indent 10 }}
             - name: ENV
               valueFrom:
                 configMapKeyRef:
