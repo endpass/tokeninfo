@@ -1,0 +1,25 @@
+{{- if .Values.ingressroute.enabled -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    environment: {{ .Values.global.environment }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints:
+  {{- range .Values.ingressroute.entrypoints }}
+    - {{ . }}
+  {{- end }}
+  routes:
+    - match: Host(`{{ .Values.ingressroute.host }}`)
+      kind: Rule
+      services:
+        - name: {{ .Chart.Name }}
+          port: {{ .Values.service.port }}
+{{- end }}

@@ -94,7 +94,10 @@ jobs:
         WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run:
-        werf deploy --release tokeninfo --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
+        werf deploy --release tokeninfo --namespace review --env review \
+        --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) \
+        --helm-release-storage-namespace werf-releases \
+        --helm-release-storage-type secret
         
     - name: Create DNS record
       id: create_dns_record
