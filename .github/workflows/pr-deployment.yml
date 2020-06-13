@@ -85,7 +85,7 @@ jobs:
         WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        werf build-and-publish --tag-by-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
+        werf build-and-publish --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
         
     - name: Create DNS record
       id: create_dns_record
