@@ -62,10 +62,6 @@ jobs:
 # Start of build and deployment logic
 #
     
-    - name: Get commit short SHA
-      id: short_sha_tag
-      run: echo ::set-output name=sha_short::$(git rev-parse --short=8 ${{ github.sha }})
-
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -80,7 +76,6 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
-        IMAGE_TAG: ${{ steps.short_sha_tag.outputs.sha_short }}
         WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
         WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
