@@ -23,7 +23,7 @@ spec:
         - name: {{ .Chart.Name }}
 {{ werf_container_image . | indent 10 }}
           env:
-{{ werf_container_env . | indent 10 }}
+{{ werf_container_env . | indent 12 }}
             - name: ENV
               valueFrom:
                 configMapKeyRef:
