@@ -95,7 +95,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-releases
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run:
-        werf deploy --release tokeninfo --namespace review --env review
+        werf deploy --release tokeninfo --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }})
         
     - name: Create DNS record
       id: create_dns_record
