@@ -21,6 +21,7 @@ RUN adduser \
     --uid "${UID}" \    
     "${USER}"
 
+USER tokeninfo
 WORKDIR /app
 COPY . .
 ADD https://github.com/trustwallet/tokens/tree/master/tokens /app/tokens
