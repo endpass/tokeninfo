@@ -29,8 +29,8 @@ ADD https://github.com/MyEtherWallet/ethereum-lists/raw/master/dist/tokens/eth/t
 RUN go mod download && \
     GOOS=linux GOARCH=amd64 go build -a -tags netgo \
     -ldflags '-s -w -extldflags "-static"' \
-    -o bin/tokeninfo
-RUN chown -R tokeninfo:tokeninfo /app
+    -o bin/tokeninfo && \
+    chown -R tokeninfo:tokeninfo /app
 
 FROM scratch
 ENV TOKEN_LIST /data/tokens-eth.json
