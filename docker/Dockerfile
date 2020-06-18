@@ -1,4 +1,4 @@
-FROM golang:1.13.10-alpine3.11 as builder
+FROM golang:1.13.12-alpine3.11 as builder
 
 RUN apk add --no-cache \
     git=2.24.3-r0 \
@@ -9,6 +9,17 @@ RUN apk add --no-cache \
 ENV GOPRIVATE=github.com/endpass
 ENV GOPROXY=https://proxy.golang.org,direct
 ENV GO111MODULE=on
+ENV USER=tokeninfo
+ENV UID=10001
+
+RUN adduser \    
+    --disabled-password \    
+    --gecos "" \    
+    --home "/nonexistent" \    
+    --shell "/sbin/nologin" \    
+    --no-create-home \    
+    --uid "${UID}" \    
+    "${USER}"
 
 WORKDIR /app
 COPY . .
@@ -23,9 +34,11 @@ RUN go mod download && \
 FROM scratch
 ENV TOKEN_LIST /data/tokens-eth.json
 ENV TOKEN_IMAGE_DIR /data/tokens
+COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /app/bin/tokeninfo .
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/tokens/ /data/tokens/
 COPY --from=builder /app/tokens-eth.json /data/
+USER tokeninfo
 EXPOSE 8000
 ENTRYPOINT ["/tokeninfo"]
