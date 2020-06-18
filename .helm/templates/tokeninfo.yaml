@@ -40,8 +40,8 @@ spec:
             initialDelaySeconds: 10
           resources:
             requests:
-              cpu: {{ .Values.deployment.resources.request.cpu }}
-              memory: {{ .Values.deployment.resources.request.memory }}
+              cpu: {{ .Values.deployment.resources.requests.cpu }}
+              memory: {{ .Values.deployment.resources.requests.memory }}
             limits:
               cpu: {{ .Values.deployment.resources.limits.cpu }}
               memory: {{ .Values.deployment.resources.limits.memory }}

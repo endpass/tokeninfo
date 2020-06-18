@@ -6,11 +6,11 @@ deployment:
   env:
     token_list: /data/tokens-eth.json
     token_image_dir: /data/tokens
-  resources:
-    request:
+  resources: 
+    requests:
       cpu: 50m
       memory: 100Mi
-    limit:
+    limits:
       cpu: 50m
       memory: 100Mi
 
