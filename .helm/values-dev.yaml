@@ -1,22 +1,31 @@
 ---
 environment: development
-service:
-  port: 8000
+
 deployment:
   replicaCount: 1
-configmap:
+  env:
+    token_list: /data/tokens-eth.json
+    token_image_dir: /data/tokens
+  resources:
+    request:
+      cpu: 50m
+      memory: 100Mi
+    limit:
+      cpu: 50m
+      memory: 100Mi
+
+service:
+  port: 8000
 
 ingress:
   enabled: false
   annotations: {}
-    
-  path: /
   host: tokeninfo-dev.endpass.com
+  path: /
     
 ingressroute:
   enabled: true
   annotations: {}
-    
   entrypoints:
     - web
   host: tokeninfo-dev.endpass.com

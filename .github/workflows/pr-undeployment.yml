@@ -13,12 +13,15 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install werf
-      env:
-        WERF_VERSION: v1.1.16+fix8
+    - name: Install multiwerf
       run: |
-        mkdir -p $HOME/bin && curl -L https://dl.bintray.com/flant/werf/$WERF_VERSION/werf-linux-amd64-$WERF_VERSION -o $HOME/bin/werf
-        chmod +x $HOME/bin/werf
+        # add ~/bin into path
+        export PATH=$PATH:$HOME/bin
+        echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+        # install multiwerf into ~/bin directory
+        mkdir -p ~/bin
+        cd ~/bin
+        curl -L https://raw.githubusercontent.com/flant/multiwerf/master/get.sh | bash
         echo "::add-path::$HOME/bin"
 
     - name: Create kubeconfig
@@ -44,6 +47,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-releases
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
+        . $(multiwerf use 1.1 stable --as-file)
         werf dismiss --release tokeninfo --namespace review
   
     - name: Delete DNS record
