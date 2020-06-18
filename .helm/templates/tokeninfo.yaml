@@ -18,36 +18,36 @@ spec:
         environment: {{ .Values.global.env }}
     spec:
       containers:
-        - name: tokeninfo
-{{ werf_container_image . | indent 10 }}
-          env:
-{{ werf_container_env . | indent 12 }}
-            - name: ENV
-              value: {{ .Values.global.env }}
-            - name: TOKEN_LIST
-              value: {{ .Values.deployment.env.token_list }}
-            - name: TOKEN_IMAGE_DIR
-              value: {{ .Values.deployment.env.token_image_dir }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.service.port }}
-            timeoutSeconds: 10
-            initialDelaySeconds: 10
-          resources:
-            requests:
-              cpu: {{ .Values.deployment.resources.requests.cpu }}
-              memory: {{ .Values.deployment.resources.requests.memory }}
-            limits:
-              cpu: {{ .Values.deployment.resources.limits.cpu }}
-              memory: {{ .Values.deployment.resources.limits.memory }}
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+      - name: tokeninfo
+{{ werf_container_image . | indent 8 }}
+        env:
+{{ werf_container_env . | indent 8 }}
+        - name: ENV
+          value: {{ .Values.global.env | quote }}
+        - name: TOKEN_LIST
+          value: {{ .Values.deployment.env.token_list | quote  }}
+        - name: TOKEN_IMAGE_DIR
+          value: {{ .Values.deployment.env.token_image_dir | quote }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+          timeoutSeconds: 10
+          initialDelaySeconds: 10
+        resources:
+          requests:
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+            memory: {{ .Values.deployment.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
+            memory: {{ .Values.deployment.resources.limits.memory }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
 
 ---
 apiVersion: v1
@@ -60,15 +60,15 @@ metadata:
     environment: {{ .Values.global.env }}
 spec:
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  - port: {{ .Values.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
   selector:
     app: tokeninfo
 
 ---
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -83,17 +83,17 @@ metadata:
   {{- end }}
 spec:
   rules:
-    - host: {{ .Values.ingress.host | quote }}
-      http:
-        paths:
-          - path: {{ .Values.ingress.path }}
-            backend:
-              serviceName: tokeninfo
-              servicePort: {{ .Values.service.port }}
+  - host: {{ .Values.ingress.host | quote }}
+    http:
+      paths:
+      - path: {{ .Values.ingress.path }}
+        backend:
+          serviceName: tokeninfo
+          servicePort: {{ .Values.service.port }}
 {{- end }}
 
 ---
-{{- if .Values.ingressroute.enabled -}}
+{{- if .Values.ingressroute.enabled }}
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
@@ -112,9 +112,9 @@ spec:
     - {{ . }}
   {{- end }}
   routes:
-    - match: Host(`{{ .Values.ingressroute.host }}`)
-      kind: Rule
-      services:
-        - name: tokeninfo
-          port: {{ .Values.service.port }}
+  - kind: Rule
+    match: Host(`{{ .Values.ingressroute.host }}`)
+    services:
+    - name: tokeninfo
+      port: {{ .Values.service.port }}
 {{- end }}
