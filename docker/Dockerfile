@@ -21,7 +21,6 @@ RUN adduser \
     --uid "${UID}" \    
     "${USER}"
 
-USER tokeninfo
 WORKDIR /app
 COPY . .
 ADD https://github.com/trustwallet/tokens/tree/master/tokens /app/tokens
@@ -35,11 +34,11 @@ RUN go mod download && \
 FROM scratch
 ENV TOKEN_LIST /data/tokens-eth.json
 ENV TOKEN_IMAGE_DIR /data/tokens
+USER tokeninfo
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /app/bin/tokeninfo .
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/tokens/ /data/tokens/
 COPY --from=builder /app/tokens-eth.json /data/
-USER tokeninfo
 EXPOSE 8000
 ENTRYPOINT ["/tokeninfo"]
