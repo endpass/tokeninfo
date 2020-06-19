@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tokeninfo
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: tokeninfo
+    environment: {{ .Values.global.env }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      app: tokeninfo
+  template:
+    metadata:
+      labels:
+        app: tokeninfo
+        environment: {{ .Values.global.env }}
+    spec:
+      containers:
+      - name: tokeninfo
+{{ werf_container_image . | indent 8 }}
+        env:
+{{ werf_container_env . | indent 8 }}
+        - name: ENV
+          value: {{ .Values.global.env | quote }}
+        - name: TOKEN_LIST
+          value: {{ .Values.deployment.env.token_list | quote  }}
+        - name: TOKEN_IMAGE_DIR
+          value: {{ .Values.deployment.env.token_image_dir | quote }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+          timeoutSeconds: 10
+          initialDelaySeconds: 10
+        resources:
+          requests:
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+            memory: {{ .Values.deployment.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
+            memory: {{ .Values.deployment.resources.limits.memory }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tokeninfo
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: tokeninfo
+    environment: {{ .Values.global.env }}
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: tokeninfo
+
+---
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: tokeninfo
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: tokeninfo
+    environment: {{ .Values.global.env }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.host | quote }}
+    http:
+      paths:
+      - path: {{ .Values.ingress.path }}
+        backend:
+          serviceName: tokeninfo
+          servicePort: {{ .Values.service.port }}
+{{- end }}
+
+---
+{{- if .Values.ingressroute.enabled }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tokeninfo
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: tokeninfo
+    environment: {{ .Values.global.env }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints:
+  {{- range .Values.ingressroute.entrypoints }}
+    - {{ . }}
+  {{- end }}
+  routes:
+  - kind: Rule
+    match: Host(`{{ .Values.ingressroute.host }}`)
+    services:
+    - name: tokeninfo
+      port: {{ .Values.service.port }}
+{{- end }}

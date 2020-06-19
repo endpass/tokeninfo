@@ -14,12 +14,15 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install werf
-      env:
-        WERF_VERSION: v1.1.16+fix8
+    - name: Install multiwerf
       run: |
-        mkdir -p $HOME/bin && curl -L https://dl.bintray.com/flant/werf/$WERF_VERSION/werf-linux-amd64-$WERF_VERSION -o $HOME/bin/werf
-        chmod +x $HOME/bin/werf
+        # add ~/bin into path
+        export PATH=$PATH:$HOME/bin
+        echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+        # install multiwerf into ~/bin directory
+        mkdir -p ~/bin
+        cd ~/bin
+        curl -L https://raw.githubusercontent.com/flant/multiwerf/master/get.sh | bash
         echo "::add-path::$HOME/bin"
 
     - name: Create kubeconfig
@@ -57,10 +60,6 @@ jobs:
         mediaType: '{"previews": ["flash", "ant-man"]}'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#
-# Start of build and deployment logic
-#
     
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -80,6 +79,7 @@ jobs:
         WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/review/tokeninfo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        . $(multiwerf use 1.1 stable --as-file)
         werf build-and-publish --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) 
 
     - name: Deploy to k8s
@@ -90,8 +90,9 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-releases
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
+        . $(multiwerf use 1.1 stable --as-file)
         werf deploy --release tokeninfo --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) \
-        --set ingressroute.host=${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
+        --values .helm/values-dev.yaml --set ingressroute.host=${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         
     - name: Create DNS record
       id: create_dns_record
@@ -102,10 +103,6 @@ jobs:
         aws route53 change-resource-record-sets --hosted-zone-id ${{ secrets.HOSTEDZONE_ID }} \
         --change-batch '{ "Comment": "Testing creating a record set", "Changes": [ { "Action": "CREATE", "ResourceRecordSet": { "Name": "'"$RESOURCE_RECORD_NAME"'", "Type": "CNAME", "TTL": 120, "ResourceRecords": [ { "Value": "'"$RESOURCE_RECORD_VALUE"'" } ] } } ] }'
         
-#
-# End of build and deployment logic
-#
-
     - name: Set deployment status to success
       id: successful_deployment
       uses: octokit/request-action@v2.x

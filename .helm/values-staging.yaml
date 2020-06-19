@@ -1,0 +1,31 @@
+---
+environment: staging
+
+deployment:
+  replicaCount: 1
+  env:
+    token_list: /data/tokens-eth.json
+    token_image_dir: /data/tokens
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 50m
+      memory: 100Mi
+
+service:
+  port: 8000
+
+ingress:
+  enabled: false
+  annotations: {}
+  host: tokeninfo-staging.endpass.com
+  path: /
+    
+ingressroute:
+  enabled: true
+  annotations: {}
+  entrypoints:
+    - web
+  host: tokeninfo-staging.endpass.com
