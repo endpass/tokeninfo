@@ -53,7 +53,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         . $(multiwerf use 1.1 stable --as-file)
-        werf build-and-publish --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) 
+        werf build-and-publish --tag-git-commit ${{ github.sha }}
 
     - name: Deploy to k8s
       id: deploy-to-k8s
@@ -64,7 +64,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
         . $(multiwerf use 1.1 stable --as-file)
-        werf deploy --release tokeninfo --namespace dev --env dev --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) --values .helm/values-dev.yaml
+        werf deploy --release tokeninfo --namespace dev --env dev --tag-git-commit ${{ github.sha }} --values .helm/values-dev.yaml
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
