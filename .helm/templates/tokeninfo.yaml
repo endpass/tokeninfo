@@ -38,6 +38,12 @@ spec:
             port: {{ .Values.service.port }}
           timeoutSeconds: 10
           initialDelaySeconds: 10
+        readninessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+          timeoutSeconds: 10
+          initialDelaySeconds: 10
         resources:
           requests:
             cpu: {{ .Values.deployment.resources.requests.cpu }}
@@ -48,6 +54,9 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          privileged: false
+          
 
 ---
 apiVersion: v1
