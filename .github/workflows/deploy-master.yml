@@ -1,0 +1,77 @@
+name: master branch deployment
+on: 
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install multiwerf
+      run: |
+        # add ~/bin into path
+        export PATH=$PATH:$HOME/bin
+        echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+        # install multiwerf into ~/bin directory
+        mkdir -p ~/bin
+        cd ~/bin
+        curl -L https://raw.githubusercontent.com/flant/multiwerf/master/get.sh | bash
+        echo "::add-path::$HOME/bin"
+
+    - name: Create kubeconfig
+      run: |
+        KUBECONFIG=$(mktemp -d)/config
+        echo $BASE64_KUBECONFIG | base64 -d -w0 > $KUBECONFIG
+        echo ::set-env name=KUBECONFIG::$KUBECONFIG
+      env:
+        BASE64_KUBECONFIG: ${{ secrets.BASE64_KUBECONFIG }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
+        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/dev/tokeninfo
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        . $(multiwerf use 1.1 stable --as-file)
+        werf build-and-publish --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) 
+
+    - name: Deploy to k8s
+      id: deploy-to-k8s
+      env:
+        WERF_STAGES_STORAGE: ${{ steps.login-ecr.outputs.registry }}/stages/tokeninfo
+        WERF_IMAGES_REPO: ${{ steps.login-ecr.outputs.registry }}/dev/tokeninfo
+        WERF_HELM_RELEASE_STORAGE_NAMESPACE: werf-releases
+        WERF_HELM_RELEASE_STORAGE_TYPE: secret
+      run: |
+        . $(multiwerf use 1.1 stable --as-file)
+        werf deploy --release tokeninfo --namespace dev --env dev --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) --values .helm/values-dev.yaml
+
+    - name: Slack Notification
+      uses: homoluctus/slatify@master
+      if: always()
+      with:
+        type: ${{ job.status }}
+        job_name: 'Build and Deploy tokeninfo binary (Master)'
+        username: 'GitHub Actions'
+        icon_emoji: ':github:'
+        url: ${{ secrets.SLACK_WEBHOOK_URL }}
