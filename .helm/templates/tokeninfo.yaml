@@ -57,7 +57,6 @@ spec:
           runAsNonRoot: true
           privileged: false
           
-
 ---
 apiVersion: v1
 kind: Service
@@ -77,53 +76,22 @@ spec:
     app: tokeninfo
 
 ---
-{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: tokeninfo
-  namespace: {{ .Values.global.namespace }}
   labels:
     app: tokeninfo
     environment: {{ .Values.global.env }}
-  {{- with .Values.ingress.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  namespace: {{ .Values.global.namespace }}
 spec:
   rules:
   - host: {{ .Values.ingress.host | quote }}
     http:
       paths:
-      - path: {{ .Values.ingress.path }}
+      - path: /
         backend:
           serviceName: tokeninfo
           servicePort: {{ .Values.service.port }}
-{{- end }}
-
----
-{{- if .Values.ingressroute.enabled }}
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: tokeninfo
-  namespace: {{ .Values.global.namespace }}
-  labels:
-    app: tokeninfo
-    environment: {{ .Values.global.env }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  entryPoints:
-  {{- range .Values.ingressroute.entrypoints }}
-    - {{ . }}
-  {{- end }}
-  routes:
-  - kind: Rule
-    match: Host(`{{ .Values.ingressroute.host }}`)
-    services:
-    - name: tokeninfo
-      port: {{ .Values.service.port }}
-{{- end }}

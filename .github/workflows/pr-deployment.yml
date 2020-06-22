@@ -91,8 +91,8 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
         . $(multiwerf use 1.1 stable --as-file)
-        werf deploy --release tokeninfo --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) \
-        --values .helm/values-dev.yaml --set ingressroute.host=${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
+        werf deploy --release tokeninfo-review --namespace review --env review --tag-git-branch $(werf slugify --format docker-tag ${{ github.head_ref }}) \
+        --values .helm/values-dev.yaml --set ingress.host=${{ github.event.pull_request.number }}-tokeninfo.review.endpass.com
         
     - name: Create DNS record
       id: create_dns_record
