@@ -64,7 +64,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
         . $(multiwerf use 1.1 stable --as-file)
-        werf deploy --release tokeninfo --namespace dev --env dev --tag-git-commit ${{ github.sha }} --values .helm/values-dev.yaml
+        werf deploy --release tokeninfo-dev --namespace dev --env dev --tag-git-commit ${{ github.sha }} --values .helm/values-dev.yaml
 
     - name: Slack Notification
       uses: homoluctus/slatify@master
