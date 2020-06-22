@@ -18,14 +18,4 @@ service:
   port: 8000
 
 ingress:
-  enabled: false
-  annotations: {}
-  host: tokeninfo-dev.endpass.com
-  path: /
-    
-ingressroute:
-  enabled: true
-  annotations: {}
-  entrypoints:
-    - web
   host: tokeninfo-dev.endpass.com
