@@ -48,7 +48,7 @@ jobs:
         WERF_HELM_RELEASE_STORAGE_TYPE: secret
       run: |
         . $(multiwerf use 1.1 stable --as-file)
-        werf dismiss --release tokeninfo-review --namespace review
+        werf dismiss --release tokeninfo-review-${{ github.event.pull_request.number }} --namespace review
   
     - name: Delete DNS record
       id: delete_dns_record
