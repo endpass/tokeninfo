@@ -11,6 +11,7 @@ spec:
   selector:
     matchLabels:
       app: tokeninfo
+  automountServiceAccountToken: false
   template:
     metadata:
       labels:
